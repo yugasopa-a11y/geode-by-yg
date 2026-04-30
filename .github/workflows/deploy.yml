@@ -2,7 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ "feature/geode-ai-chat-277832386772700627" ]
+    branches: [ "main", "master", "feature/*" ]
+  workflow_dispatch:
 
 permissions:
   contents: read
