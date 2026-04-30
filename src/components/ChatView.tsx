@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useSpring, useMotionValue, useTransform } from 'framer-motion';
 import {
   Home,
   SquarePen,
@@ -22,6 +22,7 @@ import PlanView from './PlanView';
 import SettingsPanel from './SettingsPanel';
 import FloatingDock from './ui/FloatingDock';
 import { Loader, WaveLoader, TextShimmerLoader, TypingLoader } from './ui/Loader';
+import { ToastContainer, Toast } from './ui/Toast';
 import { Message, Conversation, Task } from '../types';
 import { chatStream } from '../api';
 import { saveConversations, loadConversations, saveActiveId, loadActiveId } from '../store';
@@ -45,6 +46,7 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
   const [streamingContent, setStreamingContent] = useState('');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
   const [systemPrompt, setSystemPrompt] = useLocalStorage('geode-system-prompt', 'You are Geode, an advanced AI assistant created by YG.');
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -53,6 +55,12 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
 
   const { scrollYProgress } = useScroll({ container: chatContainerRef });
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+  // Parallax background
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const bgX = useTransform(mouseX, [0, window.innerWidth], [-20, 20]);
+  const bgY = useTransform(mouseY, [0, window.innerHeight], [-20, 20]);
 
   const activeConversation = conversations.find(c => c.id === activeId);
 
@@ -67,6 +75,31 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
   useEffect(() => {
     scrollToBottom();
   }, [activeConversation?.messages, streamingContent]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  useEffect(() => {
+    if (conversations.length === 0 && !activeId) {
+      addToast('Welcome to Geode 💎', 'info');
+    }
+  }, []);
+
+  const addToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    const id = Date.now().toString();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => removeToast(id), 5000);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -85,6 +118,7 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
     setPlanTasks(null);
     setIsPlanVisible(false);
     setIsMobileMenuOpen(false);
+    addToast('New conversation started', 'success');
   };
 
   const deleteConversation = (id: string | null) => {
@@ -95,6 +129,7 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
       setActiveId(filtered.length > 0 ? filtered[0].id : null);
     }
     setIsMobileMenuOpen(false);
+    addToast('Conversation deleted', 'info');
   };
 
   const handleSend = async (content: string, image?: string) => {
@@ -231,6 +266,7 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
 
     } catch (error: any) {
       if (error.name === 'AbortError') return;
+      addToast(error.message || 'An error occurred', 'error');
       console.error(error);
     } finally {
       setIsStreaming(false);
@@ -242,6 +278,7 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
   const stopGeneration = () => {
     abortControllerRef.current?.abort();
     setIsStreaming(false);
+    addToast('Generation stopped', 'info');
   };
 
   const dockItems = [
@@ -294,9 +331,17 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
         </header>
 
         <div className="relative flex-1 overflow-hidden flex">
+          <motion.div
+            className="absolute inset-0 z-0 pointer-events-none opacity-20"
+            style={{ x: bgX, y: bgY }}
+          >
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#c9a96e]/10 rounded-full blur-[120px]" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-[120px]" />
+          </motion.div>
+
           <div
             ref={chatContainerRef}
-            className="flex-1 overflow-y-auto custom-scrollbar relative"
+            className="flex-1 overflow-y-auto custom-scrollbar relative z-10"
           >
             <motion.div
               className="fixed top-16 left-0 right-0 h-[1px] bg-[#c9a96e]/60 z-50 origin-left"
@@ -420,6 +465,8 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
           window.location.reload();
         }}
       />
+
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   );
 };

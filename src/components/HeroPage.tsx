@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect } from 'react';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 
 export const GeodeLogo = ({ size = 24 }: { size?: number }) => (
   <svg
@@ -41,17 +41,36 @@ interface HeroPageProps {
 const HeroPage = ({ onLaunch }: HeroPageProps) => {
   const words = "Intelligence, unbound".split(" ");
 
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const bgX = useTransform(mouseX, [0, window.innerWidth], [-15, 15]);
+  const bgY = useTransform(mouseY, [0, window.innerHeight], [-15, 15]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
     <div className="relative h-screen w-full flex items-center justify-center overflow-hidden">
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover z-0"
+      <motion.div
+        className="absolute inset-0 w-full h-full z-0 scale-110"
+        style={{ x: bgX, y: bgY }}
       >
-        <source src="https://res.cloudinary.com/dfonotyfb/video/upload/v1775585556/dds3_1_rqhg7x.mp4" type="video/mp4" />
-      </video>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+        >
+          <source src="https://res.cloudinary.com/dfonotyfb/video/upload/v1775585556/dds3_1_rqhg7x.mp4" type="video/mp4" />
+        </video>
+      </motion.div>
       <div className="absolute inset-0 bg-black/55 z-10" />
 
       <div className="relative z-20 text-center px-4">
@@ -102,6 +121,10 @@ const HeroPage = ({ onLaunch }: HeroPageProps) => {
       >
         GEODE BY YG • 2024
       </motion.div>
+
+      {/* Ripped Paper Texture Overlay */}
+      <div className="absolute top-0 left-0 right-0 h-10 ripped-edge-top z-30 opacity-50 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-10 ripped-edge-bottom z-30 opacity-50 pointer-events-none" />
     </div>
   );
 };
