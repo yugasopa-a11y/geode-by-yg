@@ -8,9 +8,5 @@ export default defineConfig({
       '@': '/src',
     },
   },
-  server: {
-    proxy: {
-      '/api': 'http://localhost:3001',
-    },
-  },
+  base: './', // Important for GitHub Pages
 });

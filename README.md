@@ -5,8 +5,7 @@ A full-stack, premium AI chat application with a cinematic dark aesthetic, advan
 ## Tech Stack
 
 - **Frontend**: React, Vite, Tailwind CSS, Framer Motion, Lucide React
-- **Backend**: Node.js, Express, node-fetch
-- **AI API**: OpenRouter (using `openrouter/auto` model)
+- **AI API**: OpenRouter (direct frontend integration)
 
 ## Features
 
@@ -17,12 +16,27 @@ A full-stack, premium AI chat application with a cinematic dark aesthetic, advan
 - **Productivity Tools**: Image and file upload support, custom system prompt editor, and keyboard shortcuts.
 - **Persistence**: Full conversation history and settings stored in `localStorage`.
 
+## Deployment to GitHub Pages
+
+This application is configured for easy deployment to GitHub Pages.
+
+1. **Build the project**:
+   ```bash
+   npm run build
+   ```
+2. **Deploy the `dist` folder**:
+   - You can use the `gh-pages` package:
+     ```bash
+     npm install -D gh-pages
+     npx gh-pages -d dist
+     ```
+   - Or manually upload the contents of the `dist` folder to your GitHub repository's `gh-pages` branch.
+
 ## Setup Instructions
 
 ### Prerequisites
 
 - Node.js (v18 or higher recommended)
-- An OpenRouter API Key
 
 ### Installation
 
@@ -31,23 +45,14 @@ A full-stack, premium AI chat application with a cinematic dark aesthetic, advan
    ```bash
    npm install --legacy-peer-deps
    ```
-3. Create a `.env` file in the root directory and add your API key:
-   ```env
-   OPENROUTER_API_KEY=your_openrouter_api_key_here
-   PORT=3001
-   ```
 
-### Running the Application
+### Running the Application Locally
 
-1. Start the backend server:
-   ```bash
-   npm run server
-   ```
-2. In a separate terminal, start the frontend development server:
+1. Start the frontend development server:
    ```bash
    npm run dev
    ```
-3. Open your browser and navigate to `http://localhost:5173`.
+2. Open your browser and navigate to `http://localhost:5173`.
 
 ## Keyboard Shortcuts
 
