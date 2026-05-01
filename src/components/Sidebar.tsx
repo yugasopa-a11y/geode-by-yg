@@ -1,23 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus,
-  MessageSquare,
+  Search,
+  Settings,
   Trash2,
   X,
-  Search,
-  Pin,
   Clock,
-  History,
-  Zap,
-  MoreVertical,
-  Share2,
+  Pin,
+  Compass,
+  Cpu,
+  Sparkles,
   Sun,
   Moon
 } from 'lucide-react';
 import { Conversation, Message } from '../types';
-import { GeodeLogo } from './HeroPage';
 import { cn } from '../utils/cn';
+import { GeodeLogo } from './HeroPage';
 
 interface SidebarProps {
   conversations: Conversation[];
@@ -29,7 +28,7 @@ interface SidebarProps {
   onClose: () => void;
   isDark: boolean;
   onToggleTheme: () => void;
-  pinnedMessages: Message[];
+  pinnedMessages?: Message[];
 }
 
 const Sidebar = ({
@@ -42,36 +41,26 @@ const Sidebar = ({
   onClose,
   isDark,
   onToggleTheme,
-  pinnedMessages
+  pinnedMessages = []
 }: SidebarProps) => {
-  const [search, setSearch] = React.useState('');
+  const [search, setSearch] = useState('');
 
   const filteredConversations = conversations.filter(c =>
     c.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  const groupConversations = () => {
-    const today: Conversation[] = [];
-    const yesterday: Conversation[] = [];
-    const thisWeek: Conversation[] = [];
-    const older: Conversation[] = [];
-
-    const now = new Date();
-    const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const yesterdayDate = todayDate - 86400000;
-    const thisWeekDate = todayDate - 86400000 * 7;
-
-    filteredConversations.sort((a, b) => b.updatedAt - a.updatedAt).forEach(c => {
-      if (c.updatedAt >= todayDate) today.push(c);
-      else if (c.updatedAt >= yesterdayDate) yesterday.push(c);
-      else if (c.updatedAt >= thisWeekDate) thisWeek.push(c);
-      else older.push(c);
-    });
-
-    return { Today: today, Yesterday: yesterday, 'Last 7 Days': thisWeek, Older: older };
+  const groups = {
+    today: filteredConversations.filter(c => {
+      const date = new Date(c.updatedAt);
+      const today = new Date();
+      return date.getDate() === today.getDate() && date.getMonth() === today.getMonth();
+    }),
+    older: filteredConversations.filter(c => {
+      const date = new Date(c.updatedAt);
+      const today = new Date();
+      return (date.getDate() !== today.getDate() || date.getMonth() !== today.getMonth()) && (today.getTime() - date.getTime() < 7 * 24 * 60 * 60 * 1000);
+    })
   };
-
-  const groups = groupConversations();
 
   return (
     <>
@@ -82,132 +71,155 @@ const Sidebar = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] lg:hidden"
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[80] lg:hidden"
           />
         )}
       </AnimatePresence>
 
       <motion.aside
-        initial={{ x: '-100%' }}
-        animate={{ x: isOpen ? 0 : '-100%' }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed top-0 left-0 h-full w-80 bg-surface-2 border-r border-white/5 z-[70] flex flex-col shadow-2xl"
+        initial={false}
+        animate={{
+          x: isOpen ? 0 : -320,
+          opacity: isOpen ? 1 : 0
+        }}
+        transition={{ duration: 0.8, ease: [0.2, 0, 0.2, 1] }}
+        className="fixed top-0 left-0 h-full w-[320px] bg-surface-2 border-r border-white/5 z-[90] flex flex-col shadow-[40px_0_100px_rgba(0,0,0,0.8)] backdrop-blur-3xl"
       >
-        <div className="p-6 flex flex-col gap-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-accent/10 flex items-center justify-center border border-accent/20">
-                <GeodeLogo size={20} />
-              </div>
-              <h1 className="text-xl font-serif text-white tracking-tight">Geode <span className="text-accent text-xs font-mono ml-1">V2</span></h1>
+        {/* Sidebar Header */}
+        <div className="p-8 pb-4">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4 group cursor-pointer">
+               <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center border border-accent/20 group-hover:shadow-[0_0_20px_rgba(212,184,138,0.2)] transition-all duration-700">
+                  <GeodeLogo size={20} />
+               </div>
+               <div>
+                  <h2 className="text-lg font-serif italic text-white tracking-tight">Geode Memory</h2>
+                  <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-tertiary">Sector Protocol</p>
+               </div>
             </div>
-            <button onClick={onClose} className="lg:hidden p-2 hover:bg-white/5 rounded-full text-text-secondary">
+            <button
+              onClick={onClose}
+              className="lg:hidden p-2 rounded-xl hover:bg-white/5 text-text-tertiary"
+            >
               <X size={20} />
             </button>
           </div>
 
           <button
             onClick={onNew}
-            className="w-full flex items-center justify-between gap-2 bg-accent hover:bg-accent/90 text-black font-medium px-4 py-3 rounded-xl transition-all shadow-[0_0_30px_rgba(201,169,110,0.15)] group active:scale-95"
+            className="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-accent text-black font-semibold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 shadow-[0_20px_40px_rgba(212,184,138,0.2)]"
           >
-            <div className="flex items-center gap-2">
-              <Plus size={18} />
-              <span className="text-sm">New Intelligence</span>
+            <div className="flex items-center gap-3">
+               <Sparkles size={16} />
+               <span>New Synthesis</span>
             </div>
-            <div className="w-6 h-6 rounded-lg bg-black/10 flex items-center justify-center text-[10px] font-bold">⌘N</div>
+            <div className="p-1 rounded-lg bg-black/10 text-[9px] font-bold">⌘N</div>
           </button>
-
-          <div className="relative group">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary group-focus-within:text-accent transition-colors" />
-            <input
-              type="text"
-              placeholder="Search memory..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-black/40 border border-white/5 rounded-xl py-3 pl-11 pr-4 text-xs text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-accent/40 transition-all"
-            />
-          </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-3 py-2 space-y-8 custom-scrollbar">
-          {pinnedMessages.length > 0 && (
-            <div className="space-y-2">
-               <h3 className="px-4 text-[10px] font-mono uppercase tracking-[0.2em] text-accent flex items-center gap-2">
-                 <Pin size={10} fill="currentColor" /> Pinned Context
-               </h3>
-               <div className="space-y-1">
-                 {pinnedMessages.map(m => (
-                    <div key={m.id} className="mx-2 p-3 rounded-xl bg-accent/5 border border-accent/10 text-[10px] text-text-secondary line-clamp-2">
-                       {m.content}
-                    </div>
-                 ))}
-               </div>
-            </div>
-          )}
+        {/* Search & Intelligence Memory */}
+        <div className="px-8 py-4 space-y-8 flex-1 overflow-y-auto custom-scrollbar">
+           <div className="relative group">
+              <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-tertiary group-focus-within:text-accent transition-colors" />
+              <input
+                type="text"
+                placeholder="Search Cognition..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full bg-black/40 border border-white/5 rounded-2xl pl-11 pr-4 py-3 text-xs text-text-primary placeholder:text-text-tertiary focus:border-accent/30 focus:ring-0 transition-all"
+              />
+           </div>
 
-          {Object.entries(groups).map(([name, items]) => items.length > 0 && (
-            <div key={name} className="space-y-2">
-              <h3 className="px-4 text-[10px] font-mono uppercase tracking-[0.2em] text-text-secondary flex items-center gap-2">
-                <History size={10} /> {name}
-              </h3>
-              <div className="space-y-1">
-                {items.map((c, i) => (
-                  <motion.div
-                    key={c.id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="relative group"
-                  >
-                    <button
-                      onClick={() => onSelect(c.id)}
-                      className={cn(
-                        "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all relative overflow-hidden",
-                        activeId === c.id
-                          ? "bg-accent/10 text-accent border border-accent/20"
-                          : "text-text-secondary hover:text-text-primary hover:bg-white/5 border border-transparent"
-                      )}
-                    >
-                      {activeId === c.id && (
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-1/2 bg-accent rounded-full" />
-                      )}
-                      <MessageSquare size={16} className={cn("flex-shrink-0", activeId === c.id ? "text-accent" : "text-text-secondary")} />
-                      <div className="flex-1 text-left min-w-0">
-                        <div className="text-xs font-medium truncate mb-0.5">{c.title}</div>
-                        <div className="text-[10px] text-text-secondary/60 font-mono truncate">
-                           {c.messages.length > 0 ? new Date(c.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Empty'}
+           {pinnedMessages.length > 0 && (
+             <div className="space-y-4">
+                <div className="flex items-center justify-between px-2">
+                   <div className="flex items-center gap-3">
+                      <Pin size={12} className="text-accent/60" />
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-tertiary">Pinned Context</span>
+                   </div>
+                </div>
+                <div className="space-y-2">
+                   {pinnedMessages.map((m) => (
+                     <div key={m.id} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all cursor-pointer group">
+                        <p className="text-[11px] text-text-secondary line-clamp-2 leading-relaxed group-hover:text-text-primary transition-colors italic">
+                           "{m.content}"
+                        </p>
+                     </div>
+                   ))}
+                </div>
+             </div>
+           )}
+
+           {/* Conversation Feed */}
+           <div className="space-y-8">
+              {Object.entries(groups).map(([name, items]) => items.length > 0 && (
+                <div key={name} className="space-y-4">
+                   <div className="flex items-center gap-3 px-2">
+                      <Clock size={12} className="text-text-tertiary" />
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-tertiary">{name}</span>
+                   </div>
+                   <div className="space-y-1">
+                      {items.map((conv) => (
+                        <div
+                          key={conv.id}
+                          onClick={() => onSelect(conv.id)}
+                          className={cn(
+                            "group relative flex items-center gap-4 px-4 py-4 rounded-2xl cursor-pointer transition-all duration-500",
+                            activeId === conv.id
+                              ? "bg-white/5 border border-white/10 shadow-lg"
+                              : "hover:bg-white/[0.02] border border-transparent hover:border-white/5"
+                          )}
+                        >
+                           {activeId === conv.id && (
+                             <motion.div
+                               layoutId="active-indicator"
+                               className="absolute left-0 w-1 h-6 bg-accent rounded-r-full shadow-[0_0_10px_rgba(212,184,138,0.5)]"
+                             />
+                           )}
+                           <div className="flex-1 min-w-0">
+                              <h4 className={cn(
+                                "text-sm truncate transition-colors duration-500",
+                                activeId === conv.id ? "text-accent font-medium" : "text-text-secondary group-hover:text-text-primary"
+                              )}>
+                                {conv.title}
+                              </h4>
+                              <p className="text-[10px] text-text-tertiary mt-1 font-mono uppercase tracking-widest">
+                                {conv.model.split('/').pop()}
+                              </p>
+                           </div>
+                           <button
+                             onClick={(e) => { e.stopPropagation(); onDelete(conv.id); }}
+                             className="opacity-0 group-hover:opacity-100 p-2 rounded-lg hover:bg-red-500/10 text-text-tertiary hover:text-red-400 transition-all"
+                           >
+                              <Trash2 size={14} />
+                           </button>
                         </div>
-                      </div>
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                         <MoreVertical size={14} className="text-text-secondary" />
-                      </div>
-                    </button>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); onDelete(c.id); }}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-2 opacity-0 group-hover:opacity-100 text-text-secondary hover:text-red-400 transition-all z-10"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          ))}
+                      ))}
+                   </div>
+                </div>
+              ))}
+           </div>
         </div>
 
-        <div className="p-4 border-t border-white/5 mt-auto bg-black/20">
-          <div className="flex items-center justify-between gap-2 px-2 py-1">
-            <button
-              onClick={onToggleTheme}
-              className="p-2.5 rounded-xl bg-white/5 text-text-secondary hover:text-text-primary hover:bg-white/10 transition-all flex-1 flex items-center justify-center gap-2"
-            >
-              {isDark ? <Sun size={18} /> : <Moon size={18} />}
-              <span className="text-xs font-mono uppercase">V2 PRO</span>
-            </button>
-            <button className="p-2.5 rounded-xl bg-white/5 text-text-secondary hover:text-text-primary hover:bg-white/10 transition-all group">
-              <Share2 size={18} className="group-hover:text-accent" />
-            </button>
-          </div>
+        {/* Sidebar Footer */}
+        <div className="p-8 border-t border-white/5 bg-black/20">
+           <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                 <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-text-secondary hover:text-text-primary transition-all cursor-pointer">
+                    <Settings size={18} />
+                 </div>
+                 <div className="flex flex-col">
+                    <span className="text-xs font-medium text-white">Advanced Settings</span>
+                    <span className="text-[10px] font-mono text-text-tertiary uppercase tracking-widest">System Overrides</span>
+                 </div>
+              </div>
+              <button
+                onClick={onToggleTheme}
+                className="p-3 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 text-text-secondary transition-all"
+              >
+                {isDark ? <Sun size={18} /> : <Moon size={18} />}
+              </button>
+           </div>
         </div>
       </motion.aside>
     </>

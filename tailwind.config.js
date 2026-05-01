@@ -13,16 +13,18 @@ export default {
         sans: ['Outfit', 'Inter', 'sans-serif'],
       },
       colors: {
-        background: '#0a0a0a',
-        surface: '#111111',
-        'surface-2': '#1a1a1a',
-        'surface-steel': '#2a2f3a',
-        'text-primary': '#e5e5e5',
-        'text-secondary': '#a3a3a3',
-        'accent': '#c9a96e',
-        'accent-amber': '#8B5A00',
-        'glass-bg': 'rgba(255, 255, 255, 0.03)',
-        'border-color': 'rgba(255, 255, 255, 0.1)',
+        background: '#050505',
+        surface: '#0a0a0a',
+        'surface-2': '#121212',
+        'surface-steel': '#1e222a',
+        'text-primary': '#f5f5f5',
+        'text-secondary': '#9a9a9a',
+        'text-tertiary': '#666666',
+        'accent': '#d4b88a',
+        'accent-amber': '#b8860b',
+        'glass-bg': 'rgba(255, 255, 255, 0.02)',
+        'glass-border': 'rgba(255, 255, 255, 0.06)',
+        'border-color': 'rgba(255, 255, 255, 0.08)',
       },
       animation: {
         'spin-slow': 'spin 3s linear infinite',
@@ -38,14 +40,4 @@ export default {
     },
   },
   plugins: [],
-  safelist: [
-    'bg-accent/5',
-    'bg-accent/10',
-    'border-accent/20',
-    'border-accent/40',
-    'text-accent/80',
-    'text-accent/50',
-    'bg-accent-amber/5',
-    'bg-surface-steel/10'
-  ]
 }
