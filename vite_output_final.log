@@ -1,0 +1,100 @@
+
+> geode-ai-chat-v2@2.0.0 dev
+> vite
+
+Re-optimizing dependencies because lockfile has changed
+
+  VITE v5.4.21  ready in 1016 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+12:24:13 AM [vite] hmr update /src/index.css
+12:24:20 AM [vite] hmr update /src/App.tsx, /src/index.css
+12:24:33 AM [vite] hmr update /src/components/HeroPage.tsx, /src/index.css
+12:25:11 AM [vite] hmr update /src/components/ChatInput.tsx, /src/index.css
+12:25:21 AM [vite] hmr update /src/components/ChatMessage.tsx, /src/index.css
+12:25:33 AM [vite] hmr update /src/components/PlanView.tsx, /src/index.css
+12:26:09 AM [vite] hmr update /src/components/ArtifactsPanel.tsx, /src/index.css
+12:26:50 AM [vite] hmr update /src/components/Sidebar.tsx, /src/index.css
+12:26:58 AM [vite] hmr update /src/components/EmptyState.tsx, /src/index.css
+12:27:22 AM [vite] hmr update /src/components/CommandPalette.tsx, /src/index.css
+12:27:48 AM [vite] hmr update /src/components/StatusBar.tsx, /src/index.css
+12:28:01 AM [vite] hmr update /src/components/SettingsPanel.tsx, /src/index.css
+12:29:17 AM [vite] hmr update /src/components/CommandPalette.tsx, /src/index.css
+12:29:28 AM [vite] hmr update /src/components/Sidebar.tsx, /src/index.css
+12:30:15 AM [vite] hmr update /src/index.css
+12:31:03 AM [vite] hmr update /src/index.css
+12:31:32 AM [vite] page reload tailwind.config.js
+12:33:54 AM [vite] Pre-transform error: [postcss] /app/src/index.css:151:3: The `text-text-tertiary` class does not exist. If `text-text-tertiary` is a custom class, make sure it is defined within a `@layer` directive.
+12:33:54 AM [vite] Internal server error: [postcss] /app/src/index.css:151:3: The `text-text-tertiary` class does not exist. If `text-text-tertiary` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /app/src/index.css:151:2
+  149|
+  150|  [cmdk-group-heading] {
+  151|    @apply px-5 py-3 text-[10px] font-mono uppercase tracking-[0.2em] text-text-tertiary font-bold;
+     |    ^
+  152|  }
+  153|
+      at Input.error (/app/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/app/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/app/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /app/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /app/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/app/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/app/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async compileCSS (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:36898:21)
+      at async TransformPluginContext.transform (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:36171:11)
+      at async PluginContainer.transform (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49099:18)
+      at async loadAndTransform (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51978:27)
+      at async viteTransformMiddleware (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:62106:24)
+12:35:05 AM [vite] Internal server error: [postcss] /app/src/index.css:151:3: The `text-text-tertiary` class does not exist. If `text-text-tertiary` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /app/src/index.css:151:2
+  149|
+  150|  [cmdk-group-heading] {
+  151|    @apply px-5 py-3 text-[10px] font-mono uppercase tracking-[0.2em] text-text-tertiary font-bold;
+     |    ^
+  152|  }
+  153|
+      at Input.error (/app/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/app/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/app/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /app/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /app/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/app/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/app/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async compileCSS (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:36898:21)
+      at async TransformPluginContext.transform (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:36171:11)
+      at async PluginContainer.transform (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49099:18)
+      at async loadAndTransform (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51978:27)
+      at async viteTransformMiddleware (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:62106:24)
+12:36:10 AM [vite] hmr update /src/index.css
+12:36:14 AM [vite] Pre-transform error: [postcss] /app/src/index.css:161:3: The `text-text-tertiary` class does not exist. If `text-text-tertiary` is a custom class, make sure it is defined within a `@layer` directive.
+12:36:14 AM [vite] Internal server error: [postcss] /app/src/index.css:161:3: The `text-text-tertiary` class does not exist. If `text-text-tertiary` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /app/src/index.css:161:2
+  159|
+  160|  .text-caption {
+  161|    @apply text-[10px] font-mono uppercase tracking-[0.3em] text-text-tertiary;
+     |    ^
+  162|  }
+  163|
+      at Input.error (/app/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/app/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/app/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /app/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /app/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/app/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/app/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async compileCSS (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:36898:21)
+      at async TransformPluginContext.transform (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:36171:11)
+      at async PluginContainer.transform (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49099:18)
+      at async loadAndTransform (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51978:27)
+      at async viteTransformMiddleware (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:62106:24)
+12:37:25 AM [vite] hmr update /src/index.css
+1:05:25 AM [vite] hmr update /src/components/ChatView.tsx, /src/index.css
+1:06:04 AM [vite] hmr update /src/components/ChatView.tsx, /src/index.css
+1:06:10 AM [vite] hmr update /src/components/Sidebar.tsx, /src/index.css
+1:17:32 AM [vite] hmr update /src/index.css, /src/components/ChatView.tsx
+1:18:21 AM [vite] hmr update /src/components/Sidebar.tsx, /src/index.css
+1:19:03 AM [vite] hmr update /src/components/ChatView.tsx, /src/index.css

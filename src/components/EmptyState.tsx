@@ -1,71 +1,107 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import {
+  Plus,
+  Search,
+  Code,
+  Sparkles,
+  MessageSquare,
+  Zap,
+  Globe,
+  Brain,
+  Palette,
+  Rocket
+} from 'lucide-react';
 import { GeodeLogo } from './HeroPage';
-import { cn } from '../utils/cn';
 
 interface EmptyStateProps {
   onSuggest: (text: string) => void;
 }
 
-const suggestions = [
-  "Write me a short story",
-  "Explain quantum computing",
-  "Debug my React code",
-  "Create an HTML landing page",
-  "Summarize a topic",
-  "Help me brainstorm ideas"
-];
-
 const EmptyState = ({ onSuggest }: EmptyStateProps) => {
+  const suggestions = [
+    { title: "Resynthesis", text: "Explain quantum computing using cinematic metaphors", icon: <Brain size={18} /> },
+    { title: "Neural Logic", text: "Refactor this React component for maximum performance", icon: <Code size={18} /> },
+    { title: "Synthesis", text: "Create a cinematic opening for a sci-fi noir set in Tokyo", icon: <Palette size={18} /> },
+    { title: "Global Context", text: "What is the current state of global synthetic intelligence?", icon: <Globe size={18} /> },
+  ];
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20, filter: 'blur(10px)' },
+    show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.8, ease: [0.2, 0, 0.2, 1] } }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] py-20">
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="mb-8"
+        initial={{ opacity: 0, scale: 0.9, filter: 'blur(20px)' }}
+        animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+        transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+        className="mb-16 flex flex-col items-center"
       >
-        <div className="w-20 h-20 rounded-3xl bg-[#c9a96e]/5 border border-[#c9a96e]/20 flex items-center justify-center shadow-[0_0_50px_rgba(201,169,110,0.1)]">
-          <GeodeLogo size={64} />
+        <div className="w-24 h-24 rounded-[32px] bg-accent/10 border border-accent/20 flex items-center justify-center mb-10 shadow-[0_40px_100px_rgba(212,184,138,0.2)]">
+           <GeodeLogo size={48} />
         </div>
+        <h1 className="text-display text-white mb-6 italic">Intelligence, crystallized.</h1>
+        <p className="text-[12px] font-mono text-text-tertiary uppercase tracking-[0.5em]">Geode Synthesis • Multimodal Engine V2.0</p>
       </motion.div>
 
-      <motion.h2
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="text-4xl font-serif text-white mb-2"
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl px-4"
       >
-        Geode by YG
-      </motion.h2>
-
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="text-text-secondary mb-12 font-mono text-sm tracking-widest uppercase"
-      >
-        Intelligence, crystallized.
-      </motion.p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl w-full">
-        {suggestions.map((text, i) => (
-          <motion.button
-            key={text}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            whileHover={{ scale: 1.02, borderColor: 'rgba(201,169,110,0.35)' }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => onSuggest(text)}
-            className="glass-panel rounded-xl px-4 py-4 text-sm text-left text-[rgba(200,190,170,0.75)] hover:text-white transition-all group"
+        {suggestions.map((s, i) => (
+          <motion.div
+            key={i}
+            variants={item}
+            onClick={() => onSuggest(s.text)}
+            className="group premium-card p-8 cursor-pointer hover:bg-white/[0.03] transition-all duration-700"
           >
-            {text}
-            <div className="mt-2 h-0.5 w-0 bg-[#c9a96e]/50 group-hover:w-full transition-all duration-500" />
-          </motion.button>
+             <div className="flex items-center gap-5 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-accent/60 group-hover:text-accent group-hover:border-accent/20 transition-all duration-700">
+                   {s.icon}
+                </div>
+                <div>
+                   <h3 className="text-xs font-mono uppercase tracking-[0.2em] text-text-tertiary group-hover:text-text-secondary transition-colors">{s.title}</h3>
+                   <div className="h-0.5 w-8 bg-accent/20 mt-1 group-hover:w-16 transition-all duration-700" />
+                </div>
+             </div>
+             <p className="text-lg font-serif italic text-white/40 group-hover:text-white/90 leading-relaxed transition-all duration-700">
+                "{s.text}"
+             </p>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.4 }}
+        transition={{ delay: 2, duration: 2 }}
+        className="mt-24 flex items-center gap-10"
+      >
+         <div className="flex items-center gap-3">
+            <Rocket size={14} className="text-accent/60" />
+            <span className="text-[10px] font-mono uppercase tracking-widest text-text-tertiary">Zero Latency Synthesis</span>
+         </div>
+         <div className="w-[1px] h-4 bg-white/5" />
+         <div className="flex items-center gap-3">
+            <Zap size={14} className="text-accent/60" />
+            <span className="text-[10px] font-mono uppercase tracking-widest text-text-tertiary">GPU-Accelerated Reasoning</span>
+         </div>
+      </motion.div>
     </div>
   );
 };

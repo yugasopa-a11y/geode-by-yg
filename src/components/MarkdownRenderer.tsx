@@ -4,6 +4,9 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { motion, useAnimate } from 'framer-motion';
 import { Copy, Check } from 'lucide-react';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 interface CodeBlockProps {
   language: string;
@@ -57,6 +60,8 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
   return (
     <div className="markdown-content">
       <ReactMarkdown
+        remarkPlugins={[remarkMath]}
+        rehypePlugins={[rehypeKatex]}
         components={{
           code({ node, inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec(className || '');

@@ -1,13 +1,17 @@
 
-> geode-ai-chat@1.0.0 dev
+> geode-ai-chat-v2@2.0.0 dev
 > vite
 
 
-  VITE v5.4.21  ready in 348 ms
+  VITE v5.4.21  ready in 1041 ms
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
-10:12:34 PM [vite] hmr update /src/components/ChatInput.tsx, /src/index.css
-10:12:52 PM [vite] hmr update /src/components/ChatView.tsx, /src/index.css
-10:13:21 PM [vite] hmr update /src/components/ChatInput.tsx, /src/index.css
-10:13:39 PM [vite] hmr update /src/components/ChatView.tsx, /src/index.css
+11:15:45 PM [vite] hmr update /src/components/MarkdownRenderer.tsx, /src/index.css
+11:15:45 PM [vite] hmr update /src/components/MarkdownRenderer.tsx, /src/index.css
+11:16:02 PM [vite] hmr update /src/components/ArtifactsPanel.tsx, /src/index.css
+11:16:37 PM [vite] hmr update /src/components/ChatInput.tsx, /src/index.css
+11:17:08 PM [vite] hmr update /src/index.css, /src/components/ChatView.tsx
+11:17:54 PM [vite] hmr update /src/components/ChatView.tsx, /src/index.css
+11:19:23 PM [vite] page reload src/types.ts
+Killed
