@@ -1,9 +1,13 @@
 import { Message, Task } from './types';
 import { SKILLS } from './SKILLS';
 
+const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+const IS_STATIC = !!API_KEY;
+const BASE_URL = IS_STATIC ? 'https://openrouter.ai/api/v1' : '';
+
 export async function chatStream(
   messages: any[],
-  model: string,
+  model: string = 'openrouter/auto',
   onChunk: (chunk: string) => void,
   options?: {
     signal?: AbortSignal,
@@ -15,21 +19,31 @@ export async function chatStream(
     ? [{ role: 'system', content: options.systemPrompt }, ...messages]
     : messages;
 
-  const response = await fetch('/api/chat', {
+  const endpoint = IS_STATIC ? `${BASE_URL}/chat/completions` : '/api/chat';
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (IS_STATIC) {
+    headers['Authorization'] = `Bearer ${API_KEY}`;
+    headers['HTTP-Referer'] = window.location.origin;
+    headers['X-Title'] = 'Geode AI Chat';
+  }
+
+  const response = await fetch(endpoint, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify({
       messages: formattedMessages,
-      model,
+      model: 'openrouter/auto', // Override with auto as requested
       stream: true,
       tools: options?.tools || SKILLS.map(s => ({
         type: 'function',
         function: {
           name: s.id,
           description: s.description,
-          parameters: { type: 'object', properties: {}, required: [] } // Simplified for now
+          parameters: { type: 'object', properties: {}, required: [] }
         }
       }))
     }),
@@ -65,10 +79,8 @@ export async function chatStream(
           const json = JSON.parse(data);
           const content = json.choices[0]?.delta?.content || '';
 
-          // Tool calls handling (if model supports it)
           const toolCall = json.choices[0]?.delta?.tool_calls?.[0];
           if (toolCall) {
-            // Emit a special chunk for tool calls
             onChunk(`[TOOL_CALL:${JSON.stringify(toolCall)}]`);
           }
 
@@ -83,9 +95,13 @@ export async function chatStream(
 
 export async function generateTitle(message: string): Promise<string> {
   try {
-    const response = await fetch('/api/complete', {
+    const endpoint = IS_STATIC ? `${BASE_URL}/chat/completions` : '/api/complete';
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (IS_STATIC) headers['Authorization'] = `Bearer ${API_KEY}`;
+
+    const response = await fetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({
         model: 'anthropic/claude-3-haiku',
         messages: [
@@ -103,9 +119,13 @@ export async function generateTitle(message: string): Promise<string> {
 
 export async function generatePlan(message: string): Promise<Task[]> {
   try {
-    const response = await fetch('/api/complete', {
+    const endpoint = IS_STATIC ? `${BASE_URL}/chat/completions` : '/api/complete';
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (IS_STATIC) headers['Authorization'] = `Bearer ${API_KEY}`;
+
+    const response = await fetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({
         model: 'anthropic/claude-3-haiku',
         response_format: { type: 'json_object' },

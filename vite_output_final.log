@@ -92,3 +92,9 @@ Re-optimizing dependencies because lockfile has changed
       at async loadAndTransform (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51978:27)
       at async viteTransformMiddleware (file:///app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:62106:24)
 12:37:25 AM [vite] hmr update /src/index.css
+1:05:25 AM [vite] hmr update /src/components/ChatView.tsx, /src/index.css
+1:06:04 AM [vite] hmr update /src/components/ChatView.tsx, /src/index.css
+1:06:10 AM [vite] hmr update /src/components/Sidebar.tsx, /src/index.css
+1:17:32 AM [vite] hmr update /src/index.css, /src/components/ChatView.tsx
+1:18:21 AM [vite] hmr update /src/components/Sidebar.tsx, /src/index.css
+1:19:03 AM [vite] hmr update /src/components/ChatView.tsx, /src/index.css

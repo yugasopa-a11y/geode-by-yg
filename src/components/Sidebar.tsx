@@ -8,8 +8,6 @@ import {
   X,
   Clock,
   Pin,
-  Compass,
-  Cpu,
   Sparkles,
   Sun,
   Moon
@@ -71,7 +69,7 @@ const Sidebar = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[80] lg:hidden"
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[80]"
           />
         )}
       </AnimatePresence>
@@ -81,6 +79,12 @@ const Sidebar = ({
         animate={{
           x: isOpen ? 0 : -320,
           opacity: isOpen ? 1 : 0
+        }}
+        drag="x"
+        dragConstraints={{ left: -320, right: 0 }}
+        dragElastic={0.1}
+        onDragEnd={(_, info) => {
+          if (info.offset.x < -100) onClose();
         }}
         transition={{ duration: 0.8, ease: [0.2, 0, 0.2, 1] }}
         className="fixed top-0 left-0 h-full w-[320px] bg-surface-2 border-r border-white/5 z-[90] flex flex-col shadow-[40px_0_100px_rgba(0,0,0,0.8)] backdrop-blur-3xl"
@@ -99,7 +103,7 @@ const Sidebar = ({
             </div>
             <button
               onClick={onClose}
-              className="lg:hidden p-2 rounded-xl hover:bg-white/5 text-text-tertiary"
+              className="p-2 rounded-xl hover:bg-white/5 text-text-tertiary transition-all"
             >
               <X size={20} />
             </button>
@@ -183,9 +187,6 @@ const Sidebar = ({
                               )}>
                                 {conv.title}
                               </h4>
-                              <p className="text-[10px] text-text-tertiary mt-1 font-mono uppercase tracking-widest">
-                                {conv.model.split('/').pop()}
-                              </p>
                            </div>
                            <button
                              onClick={(e) => { e.stopPropagation(); onDelete(conv.id); }}

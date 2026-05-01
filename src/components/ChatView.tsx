@@ -5,18 +5,13 @@ import {
   SquarePen,
   ListChecks,
   PanelRight,
-  Sun,
-  Moon,
   Settings,
   Trash2,
   Menu,
   X,
   Plus,
   Zap,
-  ChevronDown,
-  ArrowDownCircle,
-  Database,
-  Cpu
+  ArrowDownCircle
 } from 'lucide-react';
 import Sidebar from './Sidebar';
 import ChatInput from './ChatInput';
@@ -29,7 +24,7 @@ import FloatingDock from './ui/FloatingDock';
 import StatusBar from './StatusBar';
 import CommandPalette from './CommandPalette';
 import SkillsPanel from './SkillsPanel';
-import { Loader, WaveLoader, TextShimmerLoader, TypingLoader } from './ui/Loader';
+import { WaveLoader, TextShimmerLoader, TypingLoader } from './ui/Loader';
 import { ToastContainer, Toast } from './ui/Toast';
 import { Message, Conversation, Task, AgentState } from '../types';
 import { chatStream, generateTitle, generatePlan, formatMessagesForAI } from '../api';
@@ -42,13 +37,6 @@ interface ChatViewProps {
   onToggleTheme: () => void;
   onGoHome: () => void;
 }
-
-const MODELS = [
-  { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', cost: '$3/M' },
-  { id: 'anthropic/claude-3-opus', name: 'Claude 3 Opus', cost: '$15/M' },
-  { id: 'anthropic/claude-3-haiku', name: 'Claude 3 Haiku', cost: '$0.25/M' },
-  { id: 'google/gemini-pro-1.5', name: 'Gemini 1.5 Pro', cost: 'Free' },
-];
 
 const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
   const [conversations, setConversations] = useState<Conversation[]>(loadConversations());
@@ -63,7 +51,6 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isSkillsPanelOpen, setIsSkillsPanelOpen] = useState(false);
-  const [isModelSelectorOpen, setIsModelSelectorOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [agentState, setAgentState] = useState<AgentState>('IDLE');
   const [showScrollBottom, setShowScrollBottom] = useState(false);
@@ -134,7 +121,7 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
       messages: [],
       createdAt: Date.now(),
       updatedAt: Date.now(),
-      model: 'anthropic/claude-3.5-sonnet',
+      model: 'openrouter/auto',
       thinkingDepth: 'standard',
       pinnedContextIds: [],
       enabledTools: ['web-search', 'code-sandbox', 'image-vision', 'doc-reader', 'mermaid-render']
@@ -170,7 +157,7 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
         messages: [],
         createdAt: Date.now(),
         updatedAt: Date.now(),
-        model: 'anthropic/claude-3.5-sonnet',
+        model: 'openrouter/auto',
         thinkingDepth: 'standard',
         pinnedContextIds: [],
         enabledTools: ['web-search', 'code-sandbox', 'image-vision', 'doc-reader', 'mermaid-render']
@@ -186,13 +173,11 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
   const updatePlanFromStream = (content: string) => {
     if (planTasks.length === 0) return;
 
-    // Heuristic status updates
     setPlanTasks(prev => {
       const newTasks = [...prev];
       let changed = false;
 
       newTasks.forEach((task, idx) => {
-        // If task title or description is mentioned as "starting" or "beginning"
         if (task.status === 'pending') {
           if (content.toLowerCase().includes(task.title.toLowerCase()) ||
               content.toLowerCase().includes('starting') ||
@@ -202,7 +187,6 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
           }
         }
 
-        // If current task seems complete
         if (task.status === 'in-progress') {
            const nextTask = newTasks[idx + 1];
            if (nextTask && content.toLowerCase().includes(nextTask.title.toLowerCase())) {
@@ -212,7 +196,6 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
         }
       });
 
-      // Special case: if near end of stream, mark all as complete
       if (content.length > 1000 && !content.endsWith('...')) {
          newTasks.forEach(t => t.status = 'completed');
          changed = true;
@@ -241,7 +224,6 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
     streamingContentRef.current = '';
     setAgentState('PLANNING');
 
-    // Titling and Planning in background
     if (history.length === 0) {
       generateTitle(content).then(title => {
         setConversations(prev => prev.map(c => c.id === id ? { ...c, title } : c));
@@ -267,10 +249,10 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
 
       await chatStream(
         aiMessages,
-        activeConversation?.model || 'anthropic/claude-3.5-sonnet',
+        'openrouter/auto',
         (chunk) => {
           if (chunk.startsWith('[TOOL_CALL:')) {
-            setAgentState('SEARCHING'); // Map to appropriate state
+            setAgentState('SEARCHING');
             return;
           }
           streamingContentRef.current += chunk;
@@ -351,12 +333,14 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
       <main className="flex-1 flex flex-col min-w-0 relative">
         <header className="h-16 flex items-center justify-between px-6 border-b border-white/5 bg-background/50 backdrop-blur-md z-30">
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden p-2 hover:bg-white/5 rounded-lg text-text-secondary"
-            >
-              <Menu size={20} />
-            </button>
+            {!isSidebarOpen && (
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="p-2 hover:bg-white/5 rounded-lg text-text-secondary transition-all"
+              >
+                <Menu size={20} />
+              </button>
+            )}
             <div className="flex items-center gap-2">
                <div className={cn(
                  "w-2 h-2 rounded-full",
@@ -369,51 +353,6 @@ const ChatView = ({ isDark, onToggleTheme, onGoHome }: ChatViewProps) => {
           </div>
 
           <div className="flex items-center gap-6">
-             <div className="relative">
-                <button
-                  onClick={() => setIsModelSelectorOpen(!isModelSelectorOpen)}
-                  className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-all"
-                >
-                  <Cpu size={14} className="text-accent" />
-                  <span className="text-[10px] font-mono text-text-secondary uppercase">
-                    {activeConversation?.model.split('/').pop() || 'Select Model'}
-                  </span>
-                  <ChevronDown size={10} className="text-text-secondary" />
-                </button>
-
-                <AnimatePresence>
-                  {isModelSelectorOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-full mt-2 right-0 w-64 glass-panel rounded-2xl overflow-hidden z-[100] border-white/10 p-1"
-                    >
-                      {MODELS.map((m) => (
-                        <button
-                          key={m.id}
-                          onClick={() => {
-                            setConversations(prev => prev.map(c => c.id === activeId ? { ...c, model: m.id } : c));
-                            setIsModelSelectorOpen(false);
-                            addToast(`Switched to ${m.name}`, 'info');
-                          }}
-                          className={cn(
-                            "w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-white/5 text-left transition-all",
-                            activeConversation?.model === m.id ? "text-accent bg-accent/5" : "text-text-secondary"
-                          )}
-                        >
-                          <div className="flex flex-col">
-                             <span className="text-xs font-medium">{m.name}</span>
-                             <span className="text-[8px] font-mono opacity-50">{m.cost} tokens</span>
-                          </div>
-                          {activeConversation?.model === m.id && <div className="w-1.5 h-1.5 rounded-full bg-accent" />}
-                        </button>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-             </div>
-
              <div className="hidden lg:flex items-center gap-1.5 text-[10px] font-mono text-text-secondary/40">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-500/20" />
                 UPTIME: 100%
